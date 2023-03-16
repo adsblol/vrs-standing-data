@@ -1,0 +1,28 @@
+# This workflow is triggered every hour
+# and runs:
+# bash generate-csvs.sh && python generate-jsons.py
+# to update the data files
+# and then commits the changes to the repo
+
+on:
+  schedule:
+  - cron: '11 * * * *'
+  # and on puzh
+  push:
+    branches:
+    - main
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Update database
+      run: |
+        bash generate-csvs.sh && python generate-jsons.py
+    - name: Commit changes
+      run: |
+        git config --local user.email "no-reply@adsb.lol"
+        git config --local user.name "adsb.lol"
+        git add .
+        git commit -m "Update database [skip ci]"
+        git push

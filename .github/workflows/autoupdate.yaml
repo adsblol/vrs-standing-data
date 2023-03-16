@@ -27,6 +27,24 @@ jobs:
     - name: Generate CSVs
       run: |
         bash data/generate-csvs.sh
+        # Check if there are any changes by downloading the latest
+        # files, and comparing.
+        wget -O old_routes.csv "https://vrs-standing-data.adsb.lol/routes.csv" || true
+        wget -O old_airports.csv "https://vrs-standing-data.adsb.lol/airports.csv" || true
+        # check if old_routes.csv and routes.csv are different
+        DIFFERENT=0
+        if ! cmp -s old_routes.csv data/routes.csv; then
+          DIFFERENT=1
+        fi
+        if ! cmp -s old_airports.csv data/airports.csv; then
+          DIFFERENT=1
+        fi
+        rm old_routes.csv old_airports.csv || true
+        # If DIFFERENT=0, we exit with code 1, which will cancel the job
+        if [ $DIFFERENT -eq 0 ]; then
+          echo "No changes detected, exiting"
+          exit 1
+        fi
     - name: Generate JSONs
       run: |
         python data/generate-jsons.py

@@ -16,13 +16,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Update database
+    - name: Generate CSVs
       run: |
-        bash generate-csvs.sh && python generate-jsons.py
-    - name: Commit changes
+        bash data/generate-csvs.sh
+    - name: Generate JSONs
       run: |
-        git config --local user.email "no-reply@adsb.lol"
-        git config --local user.name "adsb.lol"
-        git add .
-        git commit -m "Update database [skip ci]"
-        git push
+        python data/generate-jsons.py
+    - name: Setup Pages
+      uses: actions/configure-pages@v3
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v1
+      with:
+        # Upload entire repository
+        path: 'data'
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v1

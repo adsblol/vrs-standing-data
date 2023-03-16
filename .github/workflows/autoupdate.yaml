@@ -42,8 +42,11 @@ jobs:
         rm old_routes.csv old_airports.csv || true
         # If DIFFERENT=0, we exit with code 1, which will cancel the job
         if [ $DIFFERENT -eq 0 ]; then
-          echo "No changes detected, exiting"
-          exit 1
+          echo "No changes detected"
+          # Only for scheduled runs, we exit with code 1
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            exit 1
+          fi
         fi
     - name: Generate JSONs
       run: |

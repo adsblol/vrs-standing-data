@@ -6,7 +6,7 @@ All data from <https://github.com/vradarserver/standing-data/>
 
 JSON data is accessible for each callsign at an URL like this:
 
-<https://vrs-standing-data.adsb.lol/data/routes/IT/ITY110.json
+<https://vrs-standing-data.adsb.lol/data/routes/IT/ITY110.json>
 
 Data is updated every hour from upstream.
 

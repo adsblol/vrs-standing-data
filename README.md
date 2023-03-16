@@ -10,8 +10,8 @@ JSON data is accessible for each callsign at an URL like this:
 
 Additionally, full csv files are available at:
 
-<https://vrs-standing-data.adsb.lol/routes.csv>
-<https://vrs-standing-data.adsb.lol/airports.csv>
+- <https://vrs-standing-data.adsb.lol/routes.csv>
+- <https://vrs-standing-data.adsb.lol/airports.csv>
 
 Data is updated every hour from upstream.
 

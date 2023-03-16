@@ -26,7 +26,7 @@ class CSVToJson:
 
 def run():
     this_path = os.path.dirname(os.path.abspath(__file__))
-    Airports = CSVToJson(os.path.join(this_path, "airports.csv"), dicts_by_key="IATA")
+    Airports = CSVToJson(os.path.join(this_path, "airports.csv"), dicts_by_key="ICAO")
     Airports.read_csv()
     Routes = CSVToJson(os.path.join(this_path, "routes.csv"), dicts_by_key="Callsign")
     Routes.read_csv()

@@ -39,7 +39,7 @@ def run():
         # where XX is the first two letters of the Callsign
         # and XXXX is the Callsign
         callsign = route["Callsign"]
-        path = os.path.join(this_path, "data", "routes", callsign[:2])
+        path = os.path.join(this_path, "routes", callsign[:2])
         if not os.path.exists(path):
             os.makedirs(path, exist_ok=True)
         filename = os.path.join(path, callsign + ".json")

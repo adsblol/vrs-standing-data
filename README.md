@@ -18,3 +18,7 @@ Data is updated every hour from upstream.
 ## Corrections
 
 Please submit corrections to aircraft, airlines, airports and routes via the SDM site: https://sdm.virtualradarserver.co.uk/Edit
+
+## Credits
+
+See <https://www.virtualradarserver.co.uk/Credits.aspx>

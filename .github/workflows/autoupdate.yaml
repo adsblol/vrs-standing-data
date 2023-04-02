@@ -48,6 +48,8 @@ jobs:
             exit 1
           fi
         fi
+        # Gzip stuff
+        gzip --best --keep data/*csv
     - name: Generate JSONs
       run: |
         python data/generate-jsons.py

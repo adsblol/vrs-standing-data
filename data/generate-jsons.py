@@ -43,6 +43,7 @@ def run():
         if not os.path.exists(path):
             os.makedirs(path, exist_ok=True)
         filename = os.path.join(path, callsign + ".json")
+        filename_simple = os.path.join(path, callsign + ".txt")
         file_contents = {
             "callsign": route["Callsign"],
             "number": route["Number"],
@@ -80,7 +81,8 @@ def run():
         # Write the file
         with open(filename, "w") as f:
             json.dump(file_contents, f, indent=4)
-
+        with open(filename_simple, "w") as f:
+            f.write(file_contents["_airport_codes_iata"])
 
 if __name__ == "__main__":
     run()

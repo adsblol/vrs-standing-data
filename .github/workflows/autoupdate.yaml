@@ -53,6 +53,9 @@ jobs:
     - name: Generate JSONs
       run: |
         python data/generate-jsons.py
+    - name: Copy LICENSE and README to data
+      run: |
+        cp LICENSE README.md data/
     - name: Generate Directory Listings
       uses: jayanta525/github-pages-directory-listing@v2.0.0
       with:

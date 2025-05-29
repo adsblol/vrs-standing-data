@@ -15,4 +15,4 @@ jobs:
       actions: write
     steps:
       - uses: actions/checkout@v4
-      - uses: unresolv/keepalive-workflow@v2
+      - uses: iakat/keepalive-workflow@v2

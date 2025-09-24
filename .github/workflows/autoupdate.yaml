@@ -33,6 +33,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Generate CSVs
+      env:
+        GHR_TOKEN: ${{ secrets.GHR_TOKEN }}    
       run: |
         bash data/generate-csvs.sh
         # Check if there are any changes by downloading the latest
@@ -58,6 +60,11 @@ jobs:
         fi
         # Gzip stuff
         gzip --best --keep data/*csv
+        wget -qO- https://github.com/c4milo/github-release/releases/download/v1.1.0/github-release_v1.1.0_linux_amd64.tar.gz | tar zxvf -
+        mv github-release /usr/local/bin/github-release
+        chmod +x /usr/local/bin/github-release
+        VERSION=$(date +%Y%m%d.%H.%M)
+        GITHUB_TOKEN=$GHR_TOKEN github-release adsblol/vrs-standing-data $(date +%s) main "$(date +%s)" "data/*csv.gz"        
     - name: Generate JSONs
       run: |
         python data/generate-jsons.py

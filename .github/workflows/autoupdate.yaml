@@ -6,19 +6,18 @@
 
 on:
   schedule:
-  - cron: '11 * * * *'
+    - cron: '11 * * * *'
   # and on puzh
   push:
     branches:
-    - main
+      - main
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 concurrency:
   group: "pages"
   cancel-in-progress: false
-
 jobs:
   keepalive-job:
     name: Keepalive Workflow
@@ -27,61 +26,60 @@ jobs:
       actions: write
     steps:
       - uses: actions/checkout@v4
-      - uses: iakat/keepalive-workflow@v2
   update:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Generate CSVs
-      env:
-        GHR_TOKEN: ${{ secrets.GHR_TOKEN }}    
-      run: |
-        bash data/generate-csvs.sh
-        # Check if there are any changes by downloading the latest
-        # files, and comparing.
-        wget -O old_routes.csv "https://vrs-standing-data.adsb.lol/routes.csv" || true
-        wget -O old_airports.csv "https://vrs-standing-data.adsb.lol/airports.csv" || true
-        # check if old_routes.csv and routes.csv are different
-        DIFFERENT=0
-        if ! cmp -s old_routes.csv data/routes.csv; then
-          DIFFERENT=1
-        fi
-        if ! cmp -s old_airports.csv data/airports.csv; then
-          DIFFERENT=1
-        fi
-        rm old_routes.csv old_airports.csv || true
-        # If DIFFERENT=0, we exit with code 1, which will cancel the job
-        if [ $DIFFERENT -eq 0 ]; then
-          echo "No changes detected"
-          # Only for scheduled runs, we exit with code 1
-          if [ "${{ github.event_name }}" = "schedule" ]; then
-            exit 1
+      - uses: actions/checkout@v2
+      - name: Generate CSVs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          bash data/generate-csvs.sh
+          # Check if there are any changes by downloading the latest
+          # files, and comparing.
+          wget -O old_routes.csv "https://vrs-standing-data.adsb.lol/routes.csv" || true
+          wget -O old_airports.csv "https://vrs-standing-data.adsb.lol/airports.csv" || true
+          # check if old_routes.csv and routes.csv are different
+          DIFFERENT=0
+          if ! cmp -s old_routes.csv data/routes.csv; then
+            DIFFERENT=1
           fi
-        fi
-        # Gzip stuff
-        gzip --best --keep data/*csv
-        wget -qO- https://github.com/c4milo/github-release/releases/download/v1.1.0/github-release_v1.1.0_linux_amd64.tar.gz | tar zxvf -
-        mv github-release /usr/local/bin/github-release
-        chmod +x /usr/local/bin/github-release
-        VERSION=$(date +%Y%m%d.%H.%M)
-        GITHUB_TOKEN=$GHR_TOKEN github-release adsblol/vrs-standing-data $(date +%s) main "$(date +%s)" "data/*csv.gz"        
-    - name: Generate JSONs
-      run: |
-        python data/generate-jsons.py
-    - name: Copy LICENSE and README to data
-      run: |
-        cp LICENSE README.md data/
-    - name: Generate Directory Listings
-      uses: jayanta525/github-pages-directory-listing@v2.0.0
-      with:
-        FOLDER: data
-    - name: Setup Pages
-      uses: actions/configure-pages@v3
-    - name: Upload artifact
-      uses: actions/upload-pages-artifact@v3
-      with:
-        # Upload entire repository
-        path: 'data'
-    - name: Deploy to GitHub Pages
-      id: deployment
-      uses: actions/deploy-pages@v4
+          if ! cmp -s old_airports.csv data/airports.csv; then
+            DIFFERENT=1
+          fi
+          rm old_routes.csv old_airports.csv || true
+          # If DIFFERENT=0, we exit with code 1, which will cancel the job
+          if [ $DIFFERENT -eq 0 ]; then
+            echo "No changes detected"
+            # Only for scheduled runs, we exit with code 1
+            if [ "${{ github.event_name }}" = "schedule" ]; then
+              exit 1
+            fi
+          fi
+          # Gzip stuff
+          gzip --best --keep data/*csv
+          wget -qO- https://github.com/c4milo/github-release/releases/download/v1.1.0/github-release_v1.1.0_linux_amd64.tar.gz | tar zxvf -
+          mv github-release /usr/local/bin/github-release
+          chmod +x /usr/local/bin/github-release
+          VERSION=$(date +%Y%m%d.%H.%M)
+          github-release adsblol/vrs-standing-data $(date +%s) main "$(date +%s)" "data/*csv.gz"
+      - name: Generate JSONs
+        run: |
+          python data/generate-jsons.py
+      - name: Copy LICENSE and README to data
+        run: |
+          cp LICENSE README.md data/
+      - name: Generate Directory Listings
+        uses: jayanta525/github-pages-directory-listing@v2.0.0
+        with:
+          FOLDER: data
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # Upload entire repository
+          path: 'data'
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
